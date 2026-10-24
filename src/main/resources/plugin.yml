@@ -1,0 +1,24 @@
+name: VortrexTrivia
+description: Plugin de trivias
+version: ${project.version}
+
+main: net.vortrex.trivia.VortrexTrivia
+api-version: '1.21.11'
+authors: [ TenochMC ]
+
+commands:
+  trivia:
+    description: Comando principal de VortrexTrivia
+    usage: /<command>
+    aliases: [vortrextrivia, vt]
+
+permissions:
+  vortrextrivia.play:
+    description: Comando principal para jugadores
+    default: true
+
+  vortrextrivia.admin:
+    description: Comando de administración
+    default: op
+    children:
+      vortrextrivia.play: true

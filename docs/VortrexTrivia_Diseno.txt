@@ -1,0 +1,413 @@
+================================================================================
+VORTREXTRIVIA - REGISTRO DE DISEÑO Y DECISIONES
+Versión del documento: 1.1   |   Fecha: 24 de octubre de 2026
+================================================================================
+
+CÓMO USAR ESTE ARCHIVO
+- Sube este archivo a la base de conocimiento de tu Proyecto de Claude y/o
+  pégalo al inicio de un chat nuevo.
+- Este documento REEMPLAZA en lo que contradiga a "ProntVortrexEvents2_0.txt".
+  Ese archivo original sigue siendo la referencia para el detalle de las ideas
+  que aquí no se cambian (secciones de rondas, estadísticas, leaderboards, etc.).
+- Cuando se tome una decisión nueva, actualiza este archivo y vuelve a subirlo.
+- Estado actual: FASE 0 en cierre (el proyecto compila y /trivia responde;
+  falta subirlo a Git). Diseño CERRADO: todas las decisiones P1-P6 y A1-A4 están
+  aprobadas (secciones 13 y 14). Autorizado por el usuario: avanzar fase a fase,
+  escribiendo él el código con la guía de Claude (ver sección 0).
+
+--------------------------------------------------------------------------------
+0. ACUERDO DE TRABAJO (importante para cualquier chat nuevo)
+--------------------------------------------------------------------------------
+- El usuario es principiante y quiere APRENDER. Quien escribe el código es él.
+- Claude explica el concepto, indica en qué archivo/clase trabajar y qué cambiar,
+  da pistas o ejemplos muy cortos, y revisa lo que el usuario escriba.
+- NO entregar el plugin completo ni clases enteras salvo que lo pida.
+- Un paso por mensaje, con explicación de qué hace cada cosa y por qué.
+- Idioma: español. Tono cercano y claro.
+- Distinguir siempre entre: requisito confirmado, recomendación y decisión
+  pendiente. No inventar APIs ni compatibilidades sin verificar.
+- Entorno del usuario: Windows, IntelliJ IDEA, Maven, terminal PowerShell.
+  Servidor de pruebas: Paper 1.21.11. Java 21.
+- Claude no puede abrir GitHub (bloquea el acceso). Para revisar código, el
+  usuario debe adjuntar un .zip (no .rar) con src/ y pom.xml.
+
+--------------------------------------------------------------------------------
+1. IDENTIDAD DEL PROYECTO
+--------------------------------------------------------------------------------
+- Nombre del plugin: VortrexTrivia   (marca personal: Vortrex)
+- Autor: TenochMC
+- Es un plugin NUEVO escrito desde cero. No se reutiliza código del anterior.
+- Plugin anterior: "VortrexEvents" 1.1.0 / "Eventos" 1.0.0 (trivia con castigos
+  por chat). Queda como versión antigua (legacy) sin mantenimiento.
+- Plataforma: Paper 1.21.11, Java 21. Compatibilidad con otras versiones solo
+  después de probarla. No prometer compatibilidad universal.
+
+Estado del repositorio (según el usuario, sin verificar por Claude):
+- Repo antiguo "TriviaPlugin": release 1.0.0 con Eventos.jar y tag v1.0.0.
+- Repo "VortrexEvents" con la 1.1.0 subida.
+- Repo de VortrexTrivia: proyecto nuevo y limpio (ver P3, sección 13).
+
+--------------------------------------------------------------------------------
+2. DECISIONES CONFIRMADAS POR EL USUARIO
+--------------------------------------------------------------------------------
+Concepto
+ [C1] El plugin será SOLO de preguntas y respuestas (trivia). No es un motor
+      genérico de eventos para la versión 2.0. La extensibilidad a otros tipos
+      de evento queda fuera de 2.0.
+ [C2] SIN CASTIGOS. Se elimina por completo todo el sistema de castigos.
+ [C3] Si el jugador gana, recibe recompensa. Si no gana, no recibe nada.
+      (Las recompensas de participación pueden existir técnicamente pero vienen
+      desactivadas por defecto.)
+
+Menús
+ [C4] Menús de INVENTARIO (no el estilo 3D con entidades Display/NMS de
+      "GUIMenus"). Motivo: más estables, sin NMS, y permiten añadir texturas
+      (resource pack) para embellecerlos en el futuro.
+ [C5] El proyecto "GUIMenus" (menús 3D) queda descartado para la 2.0. Podría
+      añadirse como módulo experimental mucho más adelante.
+
+Preguntas y respuestas
+ [C6] Cada pregunta tiene UNA respuesta correcta y varias incorrectas.
+ [C7] Cantidad de opciones por pregunta: mínimo 2, máximo 6
+      (ver aclaración en la sección 14, punto A1).
+ [C8] El número de opciones depende del tamaño del inventario del menú.
+
+Seguridad del jugador
+ [C9] Con el menú abierto el jugador PUEDE recibir daño o ser atacado.
+      Esto se avisa en el mensaje de inscripción/unión al evento.
+
+Si cierran el menú sin responder
+ [C10] Se les muestra un aviso en el chat que les permite volver a abrir el
+       menú: con un comando O haciendo clic en el mensaje del chat.
+       (El tiempo de la pregunta sigue corriendo; cerrar no lo reinicia ni
+       permite responder dos veces.)
+
+Recompensas
+ [C11] La recompensa es configurable desde la config Y mediante comandos, para
+       poder entregar cosas de otros plugins: llaves de cajas, monedas, rangos
+       temporales, etc.
+ [C12] La recompensa de cada evento la define quien crea el evento, ya sea
+       desde un menú o desde la configuración inicial. (En la primera versión:
+       desde la configuración. Crear/editar desde menús es función avanzada.)
+ [C13] Al anunciar el evento se dice cuál es la recompensa.
+ [C14] Al unirse al evento se avisa que el jugador debe tener espacio suficiente
+       en el inventario para recibir el premio.
+
+Otros
+ [C15] LuckPerms: no se hará integración directa. Se usan permisos normales de
+       Bukkit/Paper bien declarados en plugin.yml (LuckPerms los gestiona solo).
+       (Recomendación aceptada implícitamente; confirmar si se desea otra cosa.)
+
+--------------------------------------------------------------------------------
+3. FORMATO DE PREGUNTAS (questions.yml) - CONCEPTO, NO CÓDIGO
+--------------------------------------------------------------------------------
+Cada pregunta define: id único, activa/inactiva, categoría, dificultad, texto de
+la pregunta, UNA respuesta correcta, una lista de respuestas incorrectas,
+explicación opcional, tiempo límite opcional, puntos opcionales, peso aleatorio
+opcional y etiquetas opcionales.
+
+Reglas de validación al cargar (las preguntas inválidas NO entran al juego y
+generan un error claro en consola indicando id y motivo):
+ - id obligatorio y único (duplicados se rechazan).
+ - Texto de pregunta no vacío.
+ - Respuesta correcta presente y no vacía (exactamente una).
+ - Respuestas incorrectas: al menos 1 y las necesarias para no pasar de 6
+   opciones en total (ver A1 en sección 14).
+ - Ninguna respuesta vacía.
+ - No debe haber dos opciones con el mismo texto (evita ambigüedad).
+ - Longitud máxima razonable de texto (para que quepa en el ítem del menú).
+ - La cantidad de opciones debe caber en el diseño del menú configurado.
+
+Anti-trampa del menú:
+ - La respuesta correcta se guarda solo en el servidor, nunca dentro del ítem.
+ - El orden de las opciones se MEZCLA por jugador (para que no se pueda decir
+   "la correcta es el slot 3").
+ - El menú bloquea mover ítems, arrastrar, shift-click, teclas numéricas, doble
+   clic, y acciones raras (creativo, offhand, etc.).
+
+Idea futura (no confirmada): permitir escribir más incorrectas de las que se
+muestran y elegir un subconjunto aleatorio por jugador.
+
+--------------------------------------------------------------------------------
+4. REGLAS DE JUEGO PROPUESTAS
+--------------------------------------------------------------------------------
+Conceptos separados (no mezclar): acierto, ganador de pregunta, ganador de ronda,
+ganador del evento, puntos, recompensa.
+
+Ventaja técnica: como se responde con CLIC en el menú (no por chat), los clics se
+procesan en el hilo principal y el "primero en acertar" queda determinado por el
+orden de procesamiento del servidor. Sin condiciones de carrera del chat.
+
+MODO A - Un solo ganador (recomendación)
+ - Un intento por pregunta. Fallar deja al jugador fuera de ESA pregunta, no del
+   evento.
+ - El primer acierto cierra la pregunta para todos.
+ - Por defecto: evento de una ronda y una pregunta; su ganador gana el evento.
+ - Variante multirronda: cada ronda tiene ganador; el evento termina cuando
+   alguien alcanza "victorias_necesarias".
+ - Si nadie acierta: política configurable (siguiente pregunta / repetir /
+   terminar sin ganador). Por defecto: siguiente pregunta; si no quedan,
+   sin ganador.
+
+MODO B - Puntos / ganadores múltiples (recomendación)
+ - Todos responden una vez por pregunta; cada acierto da puntos base.
+ - Bonificación por rapidez: apagada por defecto.
+ - La pregunta se cierra al acabar el tiempo o cuando todos los activos
+   respondieron (configurable).
+ - Ganador de ronda: más puntos en esa ronda. Ganador del evento: 1º del ranking.
+ - Desempate (en orden): más aciertos -> menor tiempo total de respuesta ->
+   pregunta de desempate o victoria compartida (configurable).
+ - Premios por puesto (p. ej. 1º-3º) y opcionalmente por puntuación mínima.
+
+Eliminación progresiva: opcional, DESPUÉS de la 2.0.0. No se impone.
+
+Desconexiones (recomendación)
+ - En inscripción: quien se va sale de la lista.
+ - En juego: queda "ausente", puede volver mientras el evento siga; lo no
+   respondido cuenta como sin respuesta.
+ - Si se va el último participante: el evento se cancela sin recompensas.
+
+Recarga de config durante un evento: se valida y se aplica solo a eventos
+futuros. Cada sesión guarda una copia de su configuración al iniciar.
+
+--------------------------------------------------------------------------------
+5. FLUJO DE UN EVENTO Y MENÚ CERRADO
+--------------------------------------------------------------------------------
+1) Anuncio en chat: nombre, recompensa, tiempo de inscripción, participantes,
+   comando/mensaje clicable para unirse, AVISO de daño posible (C9) y AVISO de
+   espacio en inventario (C14).
+2) Inscripción (con cuenta regresiva independiente del intervalo entre eventos).
+3) Cuenta regresiva de inicio.
+4) Se abre el menú de pregunta a los participantes.
+5) Si un jugador cierra el menú sin responder: mensaje de chat clicable +
+   comando para reabrirlo (C10). El tiempo sigue corriendo en el servidor.
+6) Cierre de pregunta, revelación (correcta, explicación, puntos).
+7) Pausas y rondas según el modo.
+8) Resultados y entrega de recompensas (una sola vez).
+9) Fin de sesión y limpieza de tareas.
+
+Estados de sesión: Inscripción -> Cuenta regresiva -> Pregunta abierta ->
+Pregunta cerrada/revelación -> Pausa -> Calculando resultados -> Entregando
+recompensas -> Terminada. Desde casi cualquier estado: Cancelada.
+Reglas: una sola sesión activa a la vez; las transiciones las controla un solo
+lugar; toda tarea programada pertenece a una sesión y se cancela al terminar.
+
+--------------------------------------------------------------------------------
+6. RECOMPENSAS - DISEÑO
+--------------------------------------------------------------------------------
+Tipos soportados desde la config:
+ a) Objetos de Minecraft (material, cantidad, nombre/lore opcionales).
+ b) Comandos ejecutados como CONSOLA, para recompensas de otros plugins
+    (llaves, monedas, rangos temporales, kits, etc.).
+ c) Puntos/contadores internos del plugin (estadísticas).
+
+Variables permitidas en los comandos (recomendación, por confirmar):
+ {player} (nombre), {uuid}, {place} (puesto), {points} (puntos).
+ Solo valores controlados por el servidor, nunca texto escrito por jugadores.
+
+Reglas de seguridad:
+ - Entrega idempotente: nunca dos veces por reconexión, recarga o repetición de
+   la rutina de finalización (registro de recompensas entregadas por sesión).
+ - Se registran en log las entregas y los errores.
+ - No se asume que los comandos de otros plugins existen: si fallan, se registra
+   el error y se avisa al admin.
+ - Jugador desconectado al ganar: la recompensa queda pendiente (ver A3).
+ - Sin espacio en el inventario: ver A3.
+ - Recompensas anunciadas antes de empezar el evento (C13).
+
+--------------------------------------------------------------------------------
+7. ARQUITECTURA MODULAR (conceptual)
+--------------------------------------------------------------------------------
+ Plugin principal ... solo ciclo de vida; crea y apaga servicios en orden.
+ Configuración ...... carga, valida y entrega copias; errores claros en consola.
+ Mensajes ........... MiniMessage; mensajes mal escritos no rompen nada.
+ Preguntas .......... modelo inmutable, cargador con validación, selector por
+                      categoría/dificultad/peso.
+ Sesión ............. máquina de estados, rondas, participantes, una sola
+                      sesión activa.
+ Puntuación ......... estrategias Modo A y B, ranking y desempates (lógica pura,
+                      sin Bukkit, probable con JUnit).
+ Programador ........ eventos automáticos, anuncios, cuenta regresiva, registro
+                      de tareas.
+ Menús .............. gestor de menús de inventario (pregunta, selector de
+                      jugador, administración), leyendo menus.yml.
+ Listeners .......... solo delegan; sin lógica propia.
+ Recompensas ........ entrega idempotente y cola de pendientes.
+ Estadísticas ....... puntos, victorias, precisión, rachas.
+ Almacenamiento ..... interfaz; SQLite primero, MySQL/MariaDB después.
+ Comandos ........... un subcomando por clase, permisos y autocompletado.
+ Integraciones ...... adaptadores opcionales (PlaceholderAPI, Vault, WorldGuard).
+
+Reglas de arquitectura: sin estáticos globales; sin dependencias circulares;
+dependencias solo hacia abajo (comandos/menús/listeners -> servicios -> modelos);
+sin lógica en la clase principal; sin NMS; cancelar tareas y cerrar menús al
+desactivar el plugin.
+
+--------------------------------------------------------------------------------
+8. CONFIGURACIÓN Y PERSISTENCIA (recomendación)
+--------------------------------------------------------------------------------
+Archivos iniciales:
+ config.yml ...... ajustes generales, automatización, límites, (almacenamiento
+                   e integraciones al inicio; se separan si crecen).
+ messages.yml .... mensajes, anuncios y avisos (MiniMessage).
+ menus.yml ....... títulos, materiales, ranuras, decoración, colores, sonidos.
+ questions.yml ... preguntas, categorías, respuestas, explicaciones.
+ trivias.yml ..... plantillas de trivia (modo, rondas, tiempos, recompensa).
+ rewards.yml ..... recompensas y comandos (también pueden ir dentro de trivias).
+Nombres de archivo SIEMPRE en minúsculas (en Linux las mayúsculas importan).
+
+Validación: al cargar y al recargar, con errores comprensibles en consola.
+Recarga: valida primero y aplica solo si todo es correcto.
+Persistencia: SQLite, UUID como clave, operaciones de BD fuera del hilo
+principal; inventarios SIEMPRE en el hilo principal. Temporadas: fuera de 2.0.0.
+(Por verificar: si Paper incluye el driver de SQLite o hay que declararlo.)
+
+--------------------------------------------------------------------------------
+9. DEPENDENCIAS E INTEGRACIONES
+--------------------------------------------------------------------------------
+Obligatoria: Paper API 1.21.11, Java 21.
+Recomendada para aprender: JUnit (probar puntuación, desempates, validación).
+Opcionales (después de 2.0.0, versiones y APIs POR VERIFICAR en su momento):
+PlaceholderAPI, Vault, WorldGuard.
+Descartadas por ahora: NMS, librerías externas de menús (Foundation, etc.),
+integración directa con LuckPerms.
+
+--------------------------------------------------------------------------------
+10. PLAN POR FASES (cada una con prueba verificable)
+--------------------------------------------------------------------------------
+ Fase 0  Proyecto limpio, pom, clase principal, comando de prueba.
+         Lista cuando: carga y se apaga sin errores.
+ Fase 1  Config, mensajes MiniMessage, preguntas validadas.
+         Lista cuando: un comando de validación lista los errores de
+         questions.yml.
+ Fase 2  Sesión: estados, inscripción, cuenta regresiva, cancelar.
+         Lista cuando: un ciclo completo por comando sin tareas colgadas.
+ Fase 3  Menú de pregunta y Modo A (incluye aviso de menú cerrado, C10).
+         Lista cuando: se gana un evento clicando, sin ganadores duplicados.
+ Fase 4  Rondas, Modo B, desempates y desconexiones.
+         Lista cuando: evento de 3 rondas con ranking correcto.
+ Fase 5  Recompensas (objetos y comandos de consola).
+         Lista cuando: el premio llega una sola vez.
+         (Posible beta pública al terminar esta fase. Pendientes en memoria
+         hasta la fase 6; se documenta.)
+ Fase 6  SQLite, estadísticas y leaderboards.
+         Lista cuando: los datos sobreviven a un reinicio.
+ Fase 7  Menú de jugador, menú admin y menus.yml completo.
+         Lista cuando: se cambia el aspecto sin recompilar.
+ Fase 8  PlaceholderAPI y luego Vault o WorldGuard.
+ Fase 9  Pruebas de estabilidad y release 2.0.0.
+
+--------------------------------------------------------------------------------
+11. RIESGOS
+--------------------------------------------------------------------------------
+ - Doble entrega de recompensas.
+ - Clics raros en inventarios (arrastrar, teclas numéricas, shift, doble clic,
+   creativo). Verificar comportamiento de la API de inventarios en 1.21 durante
+   la fase 3.
+ - Tareas programadas que sobreviven al evento.
+ - Jugador recibiendo daño con el menú abierto (aceptado, se avisa).
+ - Jugador sin espacio al ganar (ver A3).
+ - Comandos de recompensa mal escritos o de plugins ausentes.
+ - Alcance demasiado grande: mitigado con fases y priorizando el núcleo.
+
+--------------------------------------------------------------------------------
+12. LECCIONES DEL PLUGIN ANTERIOR (reglas de diseño para el nuevo)
+--------------------------------------------------------------------------------
+ - Un solo lector de configuración; nombres de archivo en minúsculas
+   (en Linux "Config.yml" y "config.yml" son archivos distintos).
+ - No tocar estado compartido ni la API de Bukkit desde hilos asíncronos.
+ - No dejar jugadores "congelados" o con estado pegado: todo estado de sesión se
+   limpia al terminar, cancelar, desconectarse o apagar.
+ - Toda tarea programada pertenece a una sesión y se cancela con ella.
+ - Un solo booleano/estado de verdad (nada de dos banderas que "deberían" ser
+   iguales).
+ - Validar la config al cargar y avisar con errores claros; nada que falle en
+   silencio.
+ - Permisos con una jerarquía coherente declarada en plugin.yml.
+ - Nada de mensajes de depuración que lleguen a jugadores.
+ - Nada destructivo para el jugador (aquí ya no hay castigos).
+ - Paquetes en minúsculas; un solo nombre coherente en pom, plugin.yml y clases.
+ - No incluir carpetas del IDE ni compilados en Git (.idea, target).
+ - Usar el correo "noreply" de GitHub en los commits.
+ - En Windows, los renombrados que solo cambian mayúsculas necesitan 2 pasos
+   con git mv.
+ - Ejecutar "clean" antes de "package" para no dejar jars viejos en target/
+   y copiar solo el jar principal a la carpeta plugins del servidor.
+ - No usar "load: STARTUP" en plugin.yml (solo para plugins que tocan mundos).
+ - No usar /reload para probar; reiniciar el servidor completo.
+ - Los comandos no llevan "permission:" en plugin.yml; se revisa en el código.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+13. DECISIONES CERRADAS (antes pendientes, aprobadas por el usuario)
+--------------------------------------------------------------------------------
+ P1  Paquete Java: net.vortrex.trivia. groupId Maven: net.vortrex.
+     artifactId: VortrexTrivia.
+ P2  Comando principal: /trivia, con alias /vortrextrivia y /vt.
+ P3  Repositorio: el viejo queda como legacy; la 2.0 empieza en un proyecto
+     nuevo y limpio (repo VortrexTrivia).
+ P4  Variables permitidas en comandos de recompensa: {player}, {uuid}, {place},
+     {points}. Solo valores controlados por el servidor.
+ P5  Permisos (prefijo "vortrextrivia."):
+       vortrextrivia.play  -> default: true (todos los jugadores)
+       vortrextrivia.admin -> default: op; hijo: vortrextrivia.play
+     Nuevos permisos concretos (p. ej. vortrextrivia.admin.reload) se añaden
+     como HIJOS de vortrextrivia.admin. El comando NO lleva "permission:" en
+     plugin.yml: cada subcomando revisa su permiso en el código.
+ P6  LuckPerms: sin integración directa (solo permisos de Bukkit bien
+     declarados).
+ P7  (Aún abierto) Textos finales del anuncio y del aviso de unión: se
+     redactan en la fase 1 con messages.yml.
+
+-----
+14. ACLARACIONES Y SUPUESTOS (APROBADOS)
+--------------------------------------------------------------------------------
+ A1  Cantidad de opciones. El usuario pidió: una correcta + incorrectas,
+     "de 1 a 10 o más según el tamaño del inventario, pero máximo 6 y mínimo 2".
+     SUPUESTO: el límite de 6 y el mínimo de 2 son sobre el TOTAL de opciones
+     (1 correcta + de 1 a 5 incorrectas). Si en cambio se quisiera hasta 6
+     incorrectas (7 opciones), hay que cambiarlo aquí. Preguntas con más
+     opciones de las permitidas se rechazan en la validación.
+ A2  El menú de pregunta usará un tamaño de inventario fijo y configurable
+     (p. ej. 3 filas) y las ranuras de las opciones salen de menus.yml.
+ A3  Sin espacio o jugador desconectado al recibir el premio. El usuario
+     indicó que se AVISA con antelación (C14), pero no dijo qué pasa al entregar
+     sin espacio. RECOMENDACIÓN (por confirmar): guardar el objeto como premio
+     PENDIENTE (nunca soltarlo al suelo ni perderlo), avisar al jugador y
+     permitir reclamarlo con un comando (p. ej. "/trivia reclamar"). Los
+     premios por comando de otros plugins se ejecutan igualmente. Hasta la
+     fase 6 los pendientes viven en memoria (no sobreviven a un reinicio).
+ A4  El comando para reabrir el menú (C10) se llamará de forma provisional
+     "/trivia abrir"; el mensaje clicable ejecuta ese mismo comando.
+
+--------------------------------------------------------------------------------
+15. PRÓXIMO PASO
+--------------------------------------------------------------------------------
+ 1. Cerrar la Fase 0: subir el proyecto a Git/GitHub (con .gitignore).
+ 2. Fase 1: config.yml, messages.yml (MiniMessage) y questions.yml con
+    validación. Prueba: un comando de validación lista los errores.
+
+--------------------------------------------------------------------------------
+16. PROGRESO Y ESTADO TÉCNICO ACTUAL
+--------------------------------------------------------------------------------
+FASE 0 - hecha (pasos 1-6): proyecto Maven, pom, clase principal, plugin.yml,
+comando de prueba, compilación y prueba en servidor.
+
+Estado actual del proyecto:
+ - pom.xml: Java 21 con maven.compiler.release=21, encoding UTF-8, repositorio
+   papermc, dependencia io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT con
+   scope provided, y filtrado de recursos activo (permite ${project.version}
+   en plugin.yml). Versión del proyecto: 2.0.0-SNAPSHOT.
+ - Clase principal: net.vortrex.trivia.VortrexTrivia (extends JavaPlugin).
+   Solo ciclo de vida; registra el comando con Objects.requireNonNull.
+ - Comando: net.vortrex.trivia.command.TriviaCommand (implements
+   CommandExecutor). Patrón: revisar "!hasPermission" primero, avisar y salir.
+ - plugin.yml: name VortrexTrivia, api-version '1.21.11', comando trivia con
+   aliases [vortrextrivia, vt], permisos play y admin.
+ - Paleta visual: morado #a855f7 como color principal en los mensajes.
+
+Nota para el filtrado de recursos: cuando se añadan config.yml y otros
+archivos con posibles "${...}", restringir el filtrado solo a plugin.yml.
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
