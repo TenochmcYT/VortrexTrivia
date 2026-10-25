@@ -6,10 +6,9 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class QuestionLoader {
 
@@ -22,7 +21,7 @@ public class QuestionLoader {
     public QuestionLoadResult load(FileConfiguration yaml) {
         List<Question> questions = new ArrayList<>();
         List<String> errors = new ArrayList<>();
-        Set<String> seenIds = new HashSet<>();
+        Map<String, Integer> seenIds = new HashMap<>();
 
         List<Map<?, ?>> rawList = yaml.getMapList("questions");
         if (rawList.isEmpty()) {
@@ -42,11 +41,11 @@ public class QuestionLoader {
                 continue;
             }
 
-            if (!seenIds.add(id)) {
-                errors.add("El id '" + id + "' en la posición #" + position + " está repetido.");
+            Integer firstPosition = seenIds.putIfAbsent(id, position);
+            if (firstPosition != null) {
+                errors.add("El id '" + id + "' en la posición #" + position + " ya se usó en la pregunta #" + firstPosition + ".");
                 continue;
             }
-
         }
         return new QuestionLoadResult(questions, errors);
     }
