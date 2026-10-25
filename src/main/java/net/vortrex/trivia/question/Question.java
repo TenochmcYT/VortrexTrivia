@@ -19,6 +19,4 @@ public record Question(String id, Boolean enabled, String category, Difficulty d
     public boolean isCorrect(String option){
         return correctAnswer.equals(option);
     }
-
-
 }

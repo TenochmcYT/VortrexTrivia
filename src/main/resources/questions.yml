@@ -1,0 +1,41 @@
+# Todo texto va entre comillas dobles.
+# palabras como no, yes, on u off sin comillas se leen como verdadero o falso. Una respuesta no se convertiría en false. Un número suelto (1989) también deja de ser texto.
+# Solo espacios, nunca tabuladores. Un tabulador rompe el archivo entero.
+# Los campos que no escribes son opcionales.
+# La segunda y tercera pregunta no tienen enabled, time-limit-seconds, points, weight ni tags: el cargador les pondrá valores por defecto.
+
+
+questions:
+  - id: "capital-espana"
+    enabled: true
+    category: "geografia"
+    difficulty: "EASY"
+    text: "¿Cuál es la capital de España?"
+    correct: "Madrid"
+    wrong:
+      - "Roma"
+      - "París"
+      - "Lisboa"
+    explanation: "Madrid es la capital de España."
+    time-limit-seconds: 20
+    points: 10
+    weight: 1
+    tags: ["capitales"]
+
+  - id: "creeper-explota"
+    category: "minecraft"
+    difficulty: "EASY"
+    text: "¿Qué mob explota al acercarse al jugador?"
+    correct: "Creeper"
+    wrong:
+      - "Zombi"
+      - "Esqueleto"
+
+  - id: "restos-antiguos"
+    category: "minecraft"
+    difficulty: "HARD"
+    text: "¿Qué mineral del Nether se usa para conseguir netherita?"
+    correct: "Restos antiguos"
+    wrong:
+      - "Cuarzo"
+      - "Oro"
