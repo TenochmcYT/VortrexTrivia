@@ -1,0 +1,12 @@
+## Bienvenido a la config, donde pasaras mas de un ratito :D
+
+## Aqui se define los tiempos y limites de las preguntas
+questions:
+  ## Tiempo si la pregunta si no se define
+  default-time-limit-seconds: 20
+  ## Puntos qie da si no se define
+  default-points: 10
+  ## Largo maximo de la pregunta
+  max-question-length: 120
+  ## Largo maximo de las respuestas
+  max-answer-length: 40

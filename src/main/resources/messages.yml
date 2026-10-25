@@ -1,0 +1,9 @@
+# Aqui podras editar todos los mensajes del plugin
+
+prefix: "<#a855f7>VortrexTrivia</#a855f7> <dark_gray>»</dark_gray>"
+
+general:
+  no-permission: "<prefix> <red>No tienes permiso para hacer eso."
+
+  working: "<prefix> <gray>Funcionando correctamente. Versión <white><version>"
+

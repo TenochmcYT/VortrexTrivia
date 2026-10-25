@@ -1,6 +1,5 @@
 package net.vortrex.trivia.command;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.vortrex.trivia.VortrexTrivia;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,10 +17,11 @@ public class TriviaCommand implements CommandExecutor{
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command command, String label, String[] args) {
 
-        if (!sender.hasPermission("vortrextrivia.play")){
+        if (!sender.hasPermission("vortrextrivia.sexo")){
+            plugin.getMessages().send(sender, "general.no-permission");
             return true;
         }
-        sender.sendMessage(MiniMessage.miniMessage().deserialize("<#a855f7>VortrexTrivia</#a855f7> <dark_gray>» <gray>funcionando correctamente."));
+        plugin.getMessages().send(sender, "general.working");
         return true;
     }
 }
