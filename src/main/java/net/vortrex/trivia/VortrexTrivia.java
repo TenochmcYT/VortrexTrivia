@@ -41,6 +41,7 @@ public final class VortrexTrivia extends JavaPlugin {
             getLogger().warning(error);
         }
         getLogger().info("Problemas encontrados en las preguntas: " + result.errors().size());
+        getLogger().info("Preguntas válidas cargadas: " + result.questions().size());
 
         // Comandos
         Objects.requireNonNull(getCommand("trivia"), "El comando ‘trivia’ no está declarado en plugin.yml").setExecutor(new TriviaCommand(this));
