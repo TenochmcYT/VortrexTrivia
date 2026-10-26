@@ -98,6 +98,18 @@ public class QuestionLoader {
             if (timeLimit < 5) problems.add("el tiempo debe ser 5 segundos o más (recibí " + timeLimit + ")");
             if (points < 1) problems.add("los puntos deben ser 1 o más (recibí " + points + ")");
             if (weight < 1) problems.add("el peso debe ser 1 o más (recibí " + weight + ")");
+            if (section.contains("time-limit-seconds") && !section.isInt("time-limit-seconds")) {
+                problems.add("'time-limit-seconds' debe ser un entero (recibí: " + section.get("time-limit-seconds") + ")");
+            }
+            if (section.contains("points") && !section.isInt("points")) {
+                problems.add("'points' debe ser un entero (recibí: " + section.get("points") + ")");
+            }
+            if (section.contains("weight") && !section.isInt("weight")) {
+                problems.add("'weight' debe ser un entero (recibí: " + section.get("weight") + ")");
+            }
+            if (section.contains("enabled") && !section.isBoolean("enabled")) {
+                problems.add("'enabled' debe ser un booleano true o false (recibí: " + section.get("enabled") + ")");
+            }
 
             if (!problems.isEmpty()) {
                 for (String problem : problems) {

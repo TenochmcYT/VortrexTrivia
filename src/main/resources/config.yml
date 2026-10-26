@@ -9,4 +9,4 @@ questions:
   ## Largo maximo de la pregunta
   max-question-length: 120
   ## Largo maximo de las respuestas
-  max-answer-length: 40
+  max-answer-length: 50
