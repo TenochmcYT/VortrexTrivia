@@ -1,7 +1,6 @@
 package net.vortrex.trivia.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.logging.Logger;
 
 public record TriviaSettings(int defaultTimeLimitSeconds, int defaultPoints, int maxQuestionLength,
@@ -11,7 +10,7 @@ public record TriviaSettings(int defaultTimeLimitSeconds, int defaultPoints, int
         int defaultTimeLimit = 20;
         int defaultPoints = 10;
         int defaultQuestioinLength = 120;
-        int defaultAnswerLength = 40;
+        int defaultAnswerLength = 50;
         int limitTimeQuestions = config.getInt("questions.default-time-limit-seconds", defaultTimeLimit);
         int pointsGiven = config.getInt("questions.default-points", defaultPoints);
         int maxLengthQuestion = config.getInt("questions.max-question-length", defaultQuestioinLength);
@@ -29,7 +28,7 @@ public record TriviaSettings(int defaultTimeLimitSeconds, int defaultPoints, int
             maxLengthQuestion = defaultQuestioinLength;
         }
         if (maxLengthAnswer < 1) {
-            logger.warning("questions.max-answer-length debe ser 1 o más. Recibí: " + maxLengthAnswer + ". Uso 40.");
+            logger.warning("questions.max-answer-length debe ser 1 o más. Recibí: " + maxLengthAnswer + ". Uso 50.");
             maxLengthAnswer = defaultAnswerLength;
         }
 
