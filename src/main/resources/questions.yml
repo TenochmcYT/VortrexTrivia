@@ -1,0 +1,331 @@
+# Todo texto va entre comillas dobles.
+# palabras como no, yes, on u off sin comillas se leen como verdadero o falso. Una respuesta no se convertiría en false. Un número suelto también deja de ser texto.
+# Solo espacios, nunca tabuladores. Un tabulador rompe el archivo entero.
+# Los campos que no escribes son opcionales.
+
+
+# Te dejo 20 preguntas pre configuradas, tu puedes crear, borrar o editar las que quieras.
+
+questions:
+  - id: "capital-francia"
+    enabled: true
+    category: "geografia"
+    difficulty: "EASY"
+    text: "¿Cuál es la capital de Francia?"
+    correct: "París"
+    wrong:
+      - "Roma"
+      - "Berlín"
+      - "Madrid"
+    explanation: "París es la capital de Francia."
+    time-limit-seconds: 15
+    points: 5
+    weight: 1
+    tags: ["capitales"]
+
+  - id: "planeta-rojo"
+    enabled: true
+    category: "ciencia"
+    difficulty: "EASY"
+    text: "¿Qué planeta es conocido como el planeta rojo?"
+    correct: "Marte"
+    wrong:
+      - "Venus"
+      - "Júpiter"
+    explanation: "Marte recibe ese nombre por el color rojizo de su superficie."
+    time-limit-seconds: 10
+    points: 5
+    weight: 1
+    tags: ["planetas"]
+
+  - id: "autor-don-quijote"
+    enabled: true
+    category: "literatura"
+    difficulty: "EASY"
+    text: "¿Quién escribió Don Quijote de la Mancha?"
+    correct: "Miguel de Cervantes"
+    wrong:
+      - "Federico García Lorca"
+      - "Gabriel García Márquez"
+      - "Pablo Neruda"
+    explanation: "Miguel de Cervantes publicó la obra en el siglo XVII."
+    time-limit-seconds: 20
+    points: 8
+    weight: 2
+    tags: ["autores"]
+
+  - id: "simbolo-oro"
+    enabled: true
+    category: "quimica"
+    difficulty: "EASY"
+    text: "¿Cuál es el símbolo químico del oro?"
+    correct: "Au"
+    wrong:
+      - "Ag"
+      - "Go"
+      - "Or"
+    explanation: "Au proviene del latín 'Aurum'."
+    time-limit-seconds: 12
+    points: 6
+    weight: 1
+    tags: ["elementos"]
+
+  - id: "oceano-mayor"
+    enabled: true
+    category: "geografia"
+    difficulty: "EASY"
+    text: "¿Cuál es el océano más grande del mundo?"
+    correct: "Océano Pacífico"
+    wrong:
+      - "Océano Atlántico"
+      - "Océano Índico"
+      - "Océano Ártico"
+    explanation: "El Pacífico es el océano con mayor extensión."
+    time-limit-seconds: 15
+    points: 7
+    weight: 2
+    tags: ["oceanos"]
+
+  - id: "lenguaje-android"
+    enabled: true
+    category: "tecnologia"
+    difficulty: "MEDIUM"
+    text: "¿Qué lenguaje fue durante muchos años el principal para desarrollar aplicaciones Android?"
+    correct: "Java"
+    wrong:
+      - "Python"
+      - "C#"
+      - "Swift"
+    explanation: "Java fue el lenguaje principal antes del auge de Kotlin."
+    time-limit-seconds: 25
+    points: 15
+    weight: 3
+    tags: ["programacion", "android"]
+
+  - id: "ano-llegada-luna"
+    enabled: true
+    category: "historia"
+    difficulty: "MEDIUM"
+    text: "¿En qué año llegó el ser humano a la Luna por primera vez?"
+    correct: "1969"
+    wrong:
+      - "1965"
+      - "1972"
+      - "1959"
+    explanation: "La misión Apolo 11 ocurrió en 1969."
+    time-limit-seconds: 20
+    points: 15
+    weight: 3
+    tags: ["espacio"]
+
+  - id: "teorema-pitagoras"
+    enabled: true
+    category: "matematicas"
+    difficulty: "MEDIUM"
+    text: "¿Qué teorema relaciona los lados de un triángulo rectángulo?"
+    correct: "Teorema de Pitágoras"
+    wrong:
+      - "Teorema de Tales"
+      - "Ley de Ohm"
+      - "Teorema de Fermat"
+    explanation: "Establece que a² + b² = c²."
+    time-limit-seconds: 25
+    points: 18
+    weight: 3
+    tags: ["geometria"]
+
+  - id: "mona-lisa"
+    enabled: true
+    category: "arte"
+    difficulty: "MEDIUM"
+    text: "¿Quién pintó la Mona Lisa?"
+    correct: "Leonardo da Vinci"
+    wrong:
+      - "Miguel Ángel"
+      - "Rafael"
+      - "Vincent van Gogh"
+    explanation: "Leonardo da Vinci pintó esta famosa obra del Renacimiento."
+    time-limit-seconds: 20
+    points: 15
+    weight: 2
+    tags: ["renacimiento"]
+
+  - id: "velocidad-luz"
+    enabled: true
+    category: "fisica"
+    difficulty: "MEDIUM"
+    text: "¿Aproximadamente cuál es la velocidad de la luz en el vacío?"
+    correct: "300,000 km/s"
+    wrong:
+      - "30,000 km/s"
+      - "3,000 km/s"
+      - "3,000,000 km/s"
+    explanation: "Su valor es cercano a 299,792 km/s."
+    time-limit-seconds: 30
+    points: 20
+    weight: 4
+    tags: ["constantes"]
+
+  - id: "mundial-2022"
+    enabled: true
+    category: "deportes"
+    difficulty: "MEDIUM"
+    text: "¿Qué selección ganó la Copa Mundial de la FIFA 2022?"
+    correct: "Argentina"
+    wrong:
+      - "Francia"
+      - "Brasil"
+      - "Croacia"
+    explanation: "Argentina venció a Francia en la final."
+    time-limit-seconds: 20
+    points: 16
+    weight: 3
+    tags: ["futbol"]
+
+  - id: "continente-egipto"
+    enabled: true
+    category: "geografia"
+    difficulty: "MEDIUM"
+    text: "¿En qué continente se encuentra Egipto?"
+    correct: "África"
+    wrong:
+      - "Asia"
+      - "Europa"
+    explanation: "Egipto se ubica principalmente en África."
+    time-limit-seconds: 15
+    points: 12
+    weight: 2
+    tags: ["continentes"]
+
+  - id: "numero-pi"
+    enabled: true
+    category: "matematicas"
+    difficulty: "HARD"
+    text: "¿Cuál es el valor aproximado de π con cinco decimales?"
+    correct: "3.14159"
+    wrong:
+      - "3.14195"
+      - "3.14519"
+      - "3.14915"
+      - "3.15149"
+    explanation: "π ≈ 3.14159."
+    time-limit-seconds: 35
+    points: 35
+    weight: 5
+    tags: ["constantes"]
+
+  - id: "elemento-26"
+    enabled: true
+    category: "quimica"
+    difficulty: "HARD"
+    text: "¿Qué elemento tiene el número atómico 26?"
+    correct: "Hierro"
+    wrong:
+      - "Cobre"
+      - "Níquel"
+      - "Zinc"
+      - "Plata"
+    explanation: "El hierro tiene número atómico 26."
+    time-limit-seconds: 40
+    points: 40
+    weight: 5
+    tags: ["tabla-periodica"]
+
+  - id: "algoritmo-busqueda-binaria"
+    enabled: true
+    category: "tecnologia"
+    difficulty: "HARD"
+    text: "¿Cuál es la complejidad temporal de la búsqueda binaria?"
+    correct: "O(log n)"
+    wrong:
+      - "O(n)"
+      - "O(n²)"
+      - "O(1)"
+      - "O(n log n)"
+    explanation: "La búsqueda binaria divide el espacio de búsqueda en cada paso."
+    time-limit-seconds: 45
+    points: 45
+    weight: 5
+    tags: ["algoritmos"]
+
+  - id: "capital-australia"
+    enabled: true
+    category: "geografia"
+    difficulty: "HARD"
+    text: "¿Cuál es la capital de Australia?"
+    correct: "Canberra"
+    wrong:
+      - "Sídney"
+      - "Melbourne"
+      - "Perth"
+      - "Brisbane"
+    explanation: "Canberra fue elegida como capital entre Sídney y Melbourne."
+    time-limit-seconds: 30
+    points: 30
+    weight: 4
+    tags: ["capitales"]
+
+  - id: "primera-guerra-mundial"
+    enabled: true
+    category: "historia"
+    difficulty: "HARD"
+    text: "¿Qué evento detonó el inicio de la Primera Guerra Mundial?"
+    correct: "El asesinato del archiduque Francisco Fernando"
+    wrong:
+      - "La Revolución Francesa"
+      - "La caída del Muro de Berlín"
+      - "La invasión de Polonia"
+      - "La Guerra de Crimea"
+    explanation: "El asesinato ocurrió en Sarajevo en 1914."
+    time-limit-seconds: 50
+    points: 42
+    weight: 5
+    tags: ["guerras"]
+
+  - id: "huesos-adulto"
+    enabled: true
+    category: "biologia"
+    difficulty: "MEDIUM"
+    text: "¿Cuántos huesos tiene aproximadamente un adulto?"
+    correct: "206"
+    wrong:
+      - "186"
+      - "216"
+      - "196"
+    explanation: "El cuerpo humano adulto tiene aproximadamente 206 huesos."
+    time-limit-seconds: 25
+    points: 18
+    weight: 3
+    tags: ["anatomia"]
+
+  - id: "pais-tango"
+    enabled: true
+    category: "cultura"
+    difficulty: "EASY"
+    text: "¿En qué país se originó el tango?"
+    correct: "Argentina"
+    wrong:
+      - "Uruguay"
+      - "España"
+    explanation: "El tango nació en la región del Río de la Plata, principalmente en Argentina."
+    time-limit-seconds: 15
+    points: 6
+    weight: 1
+    tags: ["musica"]
+
+  - id: "idioma-mas-hablado-nativo"
+    enabled: true
+    category: "cultura"
+    difficulty: "HARD"
+    text: "¿Cuál es el idioma con más hablantes nativos del mundo?"
+    correct: "Mandarín"
+    wrong:
+      - "Inglés"
+      - "Español"
+      - "Hindi"
+      - "Árabe"
+    explanation: "El chino mandarín es el idioma con mayor cantidad de hablantes nativos."
+    time-limit-seconds: 45
+    points: 38
+    weight: 4
+    tags: ["idiomas"]
