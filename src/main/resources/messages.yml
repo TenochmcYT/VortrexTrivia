@@ -4,6 +4,13 @@ prefix: "<#a855f7>VortrexTrivia</#a855f7> <dark_gray>»</dark_gray>"
 
 general:
   no-permission: "<prefix> <red>No tienes permiso para hacer eso."
-
   working: "<prefix> <gray>Funcionando correctamente. Versión <white><version>"
+  unknown-subcommand: "<prefix> <red>Subcomando desconocido. Usa <white>/trivia validar<red>."
+
+validate:
+  summary: "<prefix> <gray>Validación terminada: <white><valid><gray> válidas, <white><errors><gray> problemas."
+  kept-previous: "<prefix> <yellow>No hay preguntas válidas; se conservan las preguntas cargadas anteriormente."
+  error-line: "<prefix> <red><error>"
+  more: "<prefix> <gray>Y <white><count><gray> problemas más."
+  all-ok: "<prefix> <green>Todas las preguntas pasaron la validación."
 

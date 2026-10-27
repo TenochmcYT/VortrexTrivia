@@ -22,3 +22,8 @@ permissions:
     default: op
     children:
       vortrextrivia.play: true
+      vortrextrivia.admin.validate: true
+
+  vortrextrivia.admin.validate:
+    description: Validar y recargar las preguntas
+    default: op

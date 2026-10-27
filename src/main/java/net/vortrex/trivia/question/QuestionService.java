@@ -51,7 +51,7 @@ public class QuestionService {
     public List<Question> getEnabledQuestions() {
         List<Question> result = new ArrayList<>();
         for (Question question : current.questions()) {
-            if (Boolean.TRUE.equals(question.enabled())) {
+            if (question.enabled()) {
                 result.add(question);
             }
         }

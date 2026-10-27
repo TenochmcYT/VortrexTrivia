@@ -3,10 +3,10 @@ package net.vortrex.trivia.message;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -27,17 +27,19 @@ public class Messages {
         messages = YamlConfiguration.loadConfiguration(file);
     }
 
-    public Component get(String key) {
+    public Component get(String key, TagResolver... resolvers) {
         String text = messages.getString(key);
         if (text == null) {
             plugin.getLogger().warning("Falta el mensaje: " + key);
             return Component.text("Mensaje no encontrado: " + key);
         }
         String prefix = messages.getString("prefix", "");
-        return MiniMessage.miniMessage().deserialize(text, Placeholder.parsed("prefix", prefix));
+        TagResolver prefixResolver = Placeholder.parsed("prefix", prefix);
+        return MiniMessage.miniMessage().deserialize(
+                text, TagResolver.resolver(prefixResolver, TagResolver.resolver(resolvers)));
     }
 
-    public void send(CommandSender to, String key) {
-        to.sendMessage(get(key));
+    public void send(CommandSender to, String key, TagResolver... resolvers) {
+        to.sendMessage(get(key, resolvers));
     }
 }
